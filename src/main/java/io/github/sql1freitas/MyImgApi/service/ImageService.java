@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class ImageService {
@@ -21,6 +23,11 @@ public class ImageService {
 
          return imageRepository.save(image);
 
+     }
+
+     public Optional<Image> getById (String id){
+
+         return imageRepository.findById(id);
      }
 
 }

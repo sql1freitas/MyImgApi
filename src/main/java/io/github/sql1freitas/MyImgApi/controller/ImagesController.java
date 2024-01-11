@@ -6,6 +6,8 @@ import io.github.sql1freitas.MyImgApi.enums.ImageExtension;
 import io.github.sql1freitas.MyImgApi.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,9 +50,28 @@ public class ImagesController {
     }
 
 
+
     private URI buildImageURL(Image image){
         String imagePath = "/" + image.getId();
          return ServletUriComponentsBuilder.fromCurrentRequest().path(imagePath)
                 .build().toUri();
+    }
+
+@GetMapping("{id}")
+    public ResponseEntity<byte[]> getImage (@PathVariable String id){
+
+        var possibleImage = imageService.getById(id);
+
+        if (possibleImage.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+
+        var image = possibleImage.get();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(image.getExtension().getMediaType());
+        headers.setContentLength(image.getSize());
+        headers.setContentDispositionFormData("inline; filename=\"" + image.getFileName() + "\"", image.getFileName());
+
+        return new ResponseEntity<>(image.getFile(), headers, HttpStatus.OK);
     }
 }
