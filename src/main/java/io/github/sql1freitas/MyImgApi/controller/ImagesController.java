@@ -72,7 +72,7 @@ public class ImagesController {
 
     @GetMapping
     public ResponseEntity<List<ImageDTO>> searchImage(@RequestParam(value = "extension",
-    required = false) String extension, @RequestParam (value = "query", required = false) String query){
+    required = false, defaultValue = "") String extension, @RequestParam (value = "query", required = false) String query){
 
          var result = imageService.searchImages(ImageExtension.valueOf(extension), query);
 
