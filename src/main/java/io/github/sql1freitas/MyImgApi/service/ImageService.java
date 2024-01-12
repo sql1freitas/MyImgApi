@@ -2,11 +2,13 @@ package io.github.sql1freitas.MyImgApi.service;
 
 import io.github.sql1freitas.MyImgApi.Mapper.ImageMapper;
 import io.github.sql1freitas.MyImgApi.entity.Image;
+import io.github.sql1freitas.MyImgApi.enums.ImageExtension;
 import io.github.sql1freitas.MyImgApi.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,6 +30,12 @@ public class ImageService {
      public Optional<Image> getById (String id){
 
          return imageRepository.findById(id);
+     }
+
+
+     public List<Image> searchImages (ImageExtension extension, String query){
+
+         return imageRepository.findByExtensionAndNameOrTagsLike(extension, query);
      }
 
 }

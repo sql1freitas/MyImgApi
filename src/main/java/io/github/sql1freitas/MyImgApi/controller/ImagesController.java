@@ -1,5 +1,6 @@
 package io.github.sql1freitas.MyImgApi.controller;
 
+import io.github.sql1freitas.MyImgApi.Mapper.ImageDTO;
 import io.github.sql1freitas.MyImgApi.Mapper.ImageMapper;
 import io.github.sql1freitas.MyImgApi.entity.Image;
 import io.github.sql1freitas.MyImgApi.enums.ImageExtension;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/v1/images")
@@ -50,14 +52,7 @@ public class ImagesController {
     }
 
 
-
-    private URI buildImageURL(Image image){
-        String imagePath = "/" + image.getId();
-         return ServletUriComponentsBuilder.fromCurrentRequest().path(imagePath)
-                .build().toUri();
-    }
-
-@GetMapping("{id}")
+    @GetMapping("{id}")
     public ResponseEntity<byte[]> getImage (@PathVariable String id){
 
         var possibleImage = imageService.getById(id);
@@ -73,5 +68,29 @@ public class ImagesController {
         headers.setContentDispositionFormData("inline; filename=\"" + image.getFileName() + "\"", image.getFileName());
 
         return new ResponseEntity<>(image.getFile(), headers, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ImageDTO>> searchImage(@RequestParam(value = "extension",
+    required = false) String extension, @RequestParam (value = "query", required = false) String query){
+
+         var result = imageService.searchImages(ImageExtension.valueOf(extension), query);
+
+         var images = result.stream()
+                 .map(image -> {
+                     var url =buildImageURL(image);
+                    return imageMapper.imageToDTO(image, url.toString());
+                 })
+                 .collect(Collectors.toList());
+
+
+         return ResponseEntity.ok(images);
+    }
+
+
+    private URI buildImageURL(Image image){
+        String imagePath = "/" + image.getId();
+        return ServletUriComponentsBuilder.fromCurrentRequest().path(imagePath)
+                .build().toUri();
     }
 }
