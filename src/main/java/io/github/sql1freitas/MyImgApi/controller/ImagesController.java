@@ -74,9 +74,8 @@ public class ImagesController {
     public ResponseEntity<List<ImageDTO>> searchImage(@RequestParam(value = "extension",
     required = false, defaultValue = "") String extension, @RequestParam (value = "query", required = false) String query){
 
-        //TODO: DESENVOLVER TRATAMENTO PARA EXTENSION = NULL
 
-         var result = imageService.searchImages(ImageExtension.valueOf(extension), query);
+         var result = imageService.searchImages(ImageExtension.ofName(extension), query);
 
          var images = result.stream()
                  .map(image -> {
@@ -92,7 +91,10 @@ public class ImagesController {
 
     private URI buildImageURL(Image image){
         String imagePath = "/" + image.getId();
-        return ServletUriComponentsBuilder.fromCurrentRequest().path(imagePath)
-                .build().toUri();
+        return ServletUriComponentsBuilder
+                .fromCurrentRequestUri()
+                .path(imagePath)
+                .build()
+                .toUri();
     }
 }
