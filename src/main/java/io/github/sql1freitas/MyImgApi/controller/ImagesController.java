@@ -74,6 +74,8 @@ public class ImagesController {
     public ResponseEntity<List<ImageDTO>> searchImage(@RequestParam(value = "extension",
     required = false, defaultValue = "") String extension, @RequestParam (value = "query", required = false) String query){
 
+        //TODO: DESENVOLVER TRATAMENTO PARA EXTENSION = NULL
+
          var result = imageService.searchImages(ImageExtension.valueOf(extension), query);
 
          var images = result.stream()
