@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/v1/images")
 @Slf4j
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class ImagesController {
 
 
@@ -70,7 +71,7 @@ public class ImagesController {
         return new ResponseEntity<>(image.getFile(), headers, HttpStatus.OK);
     }
 
-    @GetMapping
+    @GetMapping("/extension")
     public ResponseEntity<List<ImageDTO>> searchImage(@RequestParam(value = "extension",
     required = false, defaultValue = "") String extension, @RequestParam (value = "query", required = false) String query){
 
@@ -87,6 +88,21 @@ public class ImagesController {
 
          return ResponseEntity.ok(images);
     }
+    @GetMapping
+    public ResponseEntity<List<ImageDTO>> findAll(){
+
+        var result = imageService.searchAllImages();
+
+        var images = result.stream()
+                .map(image -> {var url = buildImageURL(image);
+                return imageMapper.imageToDTO(image, url.toString());})
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(images);
+
+    }
+
+
 
 
     private URI buildImageURL(Image image){
