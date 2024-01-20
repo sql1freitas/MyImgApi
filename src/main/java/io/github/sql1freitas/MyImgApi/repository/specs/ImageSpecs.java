@@ -13,10 +13,10 @@ public class ImageSpecs {
     }
 
     public static Specification<Image> nameLike(String name){
-        return (root, q, cb) -> cb.equal(cb.upper(root.get("name")), "%" + name.toUpperCase() + "%");
+        return (root, q, cb) -> cb.like(cb.upper(root.get("name")), "%" + name.toUpperCase() + "%");
     }
 
     public static Specification<Image> tagsLike(String tags){
-        return (root, q, cb) -> cb.equal(cb.upper(root.get("tags")), "%" + tags.toUpperCase() + "%");
+        return (root, q, cb) -> cb.like(cb.upper(root.get("tags")), "%" + tags.toUpperCase() + "%");
     }
 }

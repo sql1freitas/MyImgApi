@@ -8,6 +8,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import java.util.List;
 
@@ -47,4 +49,6 @@ public interface ImageRepository extends JpaRepository<Image, String> , JpaSpeci
         }
         return findAll(spec);
     }
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    List<Image>searchByNameIgnoreCaseStartingWith(String name);
 }

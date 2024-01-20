@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -71,35 +72,36 @@ public class ImagesController {
         return new ResponseEntity<>(image.getFile(), headers, HttpStatus.OK);
     }
 
-    @GetMapping("/extension")
-    public ResponseEntity<List<ImageDTO>> searchImage(@RequestParam(value = "extension",
-    required = false, defaultValue = "") String extension, @RequestParam (value = "query", required = false) String query){
 
 
-         var result = imageService.searchImages(ImageExtension.ofName(extension), query);
-
-         var images = result.stream()
-                 .map(image -> {
-                     var url =buildImageURL(image);
-                    return imageMapper.imageToDTO(image, url.toString());
-                 })
-                 .collect(Collectors.toList());
 
 
-         return ResponseEntity.ok(images);
-    }
     @GetMapping
-    public ResponseEntity<List<ImageDTO>> findAll(){
+    public ResponseEntity<List<ImageDTO>> findByName( @RequestParam(value = "name",
+            required = false, defaultValue = "") String name){
+       if (name.isEmpty()){
+           var allImages = imageService.searchAllImages();
 
-        var result = imageService.searchAllImages();
+           var images = allImages.stream()
+                   .map(image -> {
+                       var url = buildImageURL(image);
+                       return imageMapper.imageToDTO(image, url.toString());
+                   })
+                   .collect(Collectors.toList());
 
-        var images = result.stream()
-                .map(image -> {var url = buildImageURL(image);
-                return imageMapper.imageToDTO(image, url.toString());})
-                .collect(Collectors.toList());
+           return ResponseEntity.ok(images);
+       } else {
 
-        return ResponseEntity.ok(images);
+           var result = imageService.searchAllByName(name);
+           var images = result.stream()
+                   .map(image -> {
+                       var url = buildImageURL(image);
+                       return imageMapper.imageToDTO(image, url.toString());
+                   })
+                   .collect(Collectors.toList());
 
+           return ResponseEntity.ok(images);
+       }
     }
 
 

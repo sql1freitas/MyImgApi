@@ -7,6 +7,9 @@ spring:
     database: POSTGRESQL
     hibernate:
       ddl-auto: update
+      jdbc:
+        lob:
+          non_contextual_creation: true
     show-sql: true
   servlet:
     multipart:

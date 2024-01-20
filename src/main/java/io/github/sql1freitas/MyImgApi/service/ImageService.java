@@ -8,6 +8,8 @@ import io.github.sql1freitas.MyImgApi.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +45,11 @@ public class ImageService {
 
      public List<Image> searchAllImages(){
          return imageRepository.findAll();
+     }
+
+
+     public List<Image> searchAllByName(String name){
+         return imageRepository.searchByNameIgnoreCaseStartingWith(name);
      }
 
 }
